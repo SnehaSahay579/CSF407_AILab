@@ -1,0 +1,32 @@
+Task0:Understand the Search Problem
+
+Component             Specification
+State S               The current position of the vehicle represented as (r,c)
+                      where r is the row and c is the column
+
+Action A              Up,Down,Left,Right
+
+Transition T          Moving the vehicle to an adjacent cell in the chosen direction given that 
+                      it does not run into an obstacle
+
+Intial state so       The grid position containing s
+
+Goal G                The grid position containing  G ie the final position
+
+Cost c                Every valid position cost 1.The total path cost is the number of moves from S 
+                      to G
+                      
+                      
+Task 1:Plan the Agent
+Every point of the warehouse will be represented by coordinates (r,c) which represent the respective
+row and column respectively.Hence every state as well the warehouse will be represented.The transition function determines the next state based on the selected action. An action is valid if the resulting cell is within the grid boundaries and does not contain an obstacle.The goal will be will have its unique coordinates which will be equal to the state S when reached.The frontier stores the unexpanded states that have been discovered by the agent. Each state contains its current grid position, its parent state, and the action used to reach it. A separate visited set is maintained to prevent repeated exploration of the same state.When the goal state is reached, the final path is reconstructed using the parent information stored during the search. Starting from the goal state, the agent repeatedly follows the parent of the current state until it reaches the initial state. The resulting sequence is then reversed to obtain the path.
+
+Task 7:Reflection
+1)The grid representation, Manhattan distance heuristic, priority queue, and parent-based path reconstruction were correct. The code also calculated g(n), h(n), and f(n) appropriately.
+2)Potential issues included incorrect warehouse maps, repeated state expansion, and inaccurate state-expansion counts. These could affect the correctness of the results.
+3)I examined the code logic and tested it on maps with obstacles, multiple possible paths, and unreachable goals. I also compared the reported path length with the actual movements.
+4)Initially, terms such as frontier, expanded states, priority queue, and heuristic were unfamiliar. Understanding their roles helped me follow the A* algorithm.
+5)Yes, I modified the warehouse map and heuristic function to test different scenarios. I also examined how the program reports path length and expanded states.
+6)Testing maps with multiple paths of different lengths was useful for verifying optimality. Testing unreachable goals and maps with obstacles helped check failure handling and collision avoidance.
+7)No. Even if the algorithm appears correct, implementation errors can produce incorrect paths or misleading statistics. Testing is necessary to verify its behavior.
+8)I understood how A* combines the actual path cost g(n) and heuristic h(n) to calculate f(n). I also learned how the heuristic influences search efficiency and whether optimality is guaranteed.

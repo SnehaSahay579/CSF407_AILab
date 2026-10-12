@@ -1,0 +1,202 @@
+Task 3 :Testing Generated Program
+Test1 Results
+WAREHOUSE
+#################
+#S....#.........#
+#.###.#.#########
+#...#.#.........#
+###.#.#######...#
+#...#.........#.#
+#.###########...#
+#.............G.#
+#################
+
+Search algorithm: A* Search
+Heuristic: Manhattan distance
+Start state: (1, 1)
+Goal state: (7, 14)
+
+SEARCH RESULT
+Solution found: Yes
+Path (states): [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (5, 10), (5, 11), (5, 12), (5, 13), (6, 13), (6, 14), (7, 14)]
+Movements: Right -> Right -> Right -> Right -> Down -> Down -> Down -> Down -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Down -> Right -> Down
+Path length (moves): 19
+Total movement cost: 19
+Number of states expanded: 26
+
+Test2 Results
+WAREHOUSE
+#####
+#SG##
+#####
+
+Search algorithm: A* Search
+Heuristic: Manhattan distance
+Start state: (1, 1)
+Goal state: (1, 2)
+
+SEARCH RESULT
+Solution found: Yes
+Path (states): [(1, 1), (1, 2)]
+Movements: Right
+Path length (moves): 1
+Total movement cost: 1
+Number of states expanded: 1
+
+Test 3 Results
+WAREHOUSE
+#######
+#S....#
+###.###
+#...#G#
+#######
+
+Search algorithm: A* Search
+Heuristic: Manhattan distance
+Start state: (1, 1)
+Goal state: (3, 5)
+
+SEARCH RESULT
+Solution found: No
+No path exists from S to G.
+
+Test 4 results
+WAREHOUSE
+###########
+#S.......G#
+#.#######.#
+#.........#
+###########
+
+Search algorithm: A* Search
+Heuristic: Manhattan distance
+Start state: (1, 1)
+Goal state: (1, 9)
+
+SEARCH RESULT
+Solution found: Yes
+Path (states): [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7), (1, 8), (1, 9)]
+Movements: Right -> Right -> Right -> Right -> Right -> Right -> Right -> Right
+Path length (moves): 8
+Total movement cost: 8
+Number of states expanded: 8
+
+Task 5 Comparision of BFS and A*
+Result using BFS
+==================================================
+WAREHOUSE NAVIGATION USING BFS
+==================================================
+
+Warehouse map:
+#################
+#S....#.........#
+#.###.#.#########
+#...#.#.........#
+###.#.#######...#
+#...#.........#.#
+#.###########...#
+#.............G.#
+#################
+
+Start state: (1, 1)
+Goal state : (7, 14)
+
+==================================================
+SEARCH RESULT
+==================================================
+Search algorithm: Breadth-First Search (BFS)
+Solution found: Yes
+
+Path (states):
+[(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (5, 10), (5, 11), (5, 12), (5, 13), (6, 13), (7, 13), (7, 14)]
+
+Movements:
+Right -> Right -> Right -> Right -> Down -> Down -> Down -> Down -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Down -> Down -> Right
+
+Path length (moves): 19
+Total movement cost: 19
+Number of states expanded: 46
+   
+   
+   Measure          BFS       A*
+Solution found      Yes      Yes
+Path length         19       19
+States expanded     46       26
+
+
+Task 6:Investigate the Heuristic
+a)h(n)=0
+WAREHOUSE
+#################
+#S....#.........#
+#.###.#.#########
+#...#.#.........#
+###.#.#######...#
+#...#.........#.#
+#.###########...#
+#.............G.#
+#################
+
+Search algorithm: A* Search
+Heuristic: Manhattan distance
+Start state: (1, 1)
+Goal state: (7, 14)
+
+SEARCH RESULT
+Solution found: Yes
+Path (states): [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (5, 10), (5, 11), (5, 12), (5, 13), (6, 13), (6, 14), (7, 14)]
+Movements: Right -> Right -> Right -> Right -> Down -> Down -> Down -> Down -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Down -> Right -> Down
+Path length (moves): 19
+Total movement cost: 19
+Number of states expanded: 47
+
+b)Euclidean Distance
+WAREHOUSE
+#################
+#S....#.........#
+#.###.#.#########
+#...#.#.........#
+###.#.#######...#
+#...#.........#.#
+#.###########...#
+#.............G.#
+#################
+
+Search algorithm: A* Search
+Heuristic: Manhattan distance
+Start state: (1, 1)
+Goal state: (7, 14)
+
+SEARCH RESULT
+Solution found: Yes
+Path (states): [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (5, 10), (5, 11), (5, 12), (5, 13), (6, 13), (6, 14), (7, 14)]
+Movements: Right -> Right -> Right -> Right -> Down -> Down -> Down -> Down -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Down -> Right -> Down
+Path length (moves): 19
+Total movement cost: 19
+Number of states expanded: 26
+
+c)2*h(n)
+WAREHOUSE
+#################
+#S....#.........#
+#.###.#.#########
+#...#.#.........#
+###.#.#######...#
+#...#.........#.#
+#.###########...#
+#.............G.#
+#################
+
+Search algorithm: A* Search
+Heuristic: Manhattan distance
+Start state: (1, 1)
+Goal state: (7, 14)
+
+SEARCH RESULT
+Solution found: Yes
+Path (states): [(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (2, 5), (3, 5), (4, 5), (5, 5), (5, 6), (5, 7), (5, 8), (5, 9), (5, 10), (5, 11), (5, 12), (5, 13), (6, 13), (6, 14), (7, 14)]
+Movements: Right -> Right -> Right -> Right -> Down -> Down -> Down -> Down -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Right -> Down -> Right -> Down
+Path length (moves): 19
+Total movement cost: 19
+Number of states expanded: 19
+

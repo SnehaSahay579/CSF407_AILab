@@ -1,0 +1,161 @@
+Task 2
+Prompt Used:
+Every point of the warehouse will be represented by coordinates (r,c) which represent the respective row and column respectively.Hence every state as well the warehouse will be represented.The transition function determines the next state based on the selected action. An action is valid if the resulting cell is within the grid boundaries and does not contain an obstacle.The goal will be will have its unique coordinates which will be equal to the state S when reached.The frontier stores the unexpanded states that have been discovered by the agent. Each state contains its current grid position, its parent state, and the action used to reach it. A separate visited set is maintained to prevent repeated exploration of the same state.When the goal state is reached, the final path is reconstructed using the parent information stored during the search. Starting from the goal state, the agent repeatedly follows the parent of the current state until it reaches the initial state. The resulting sequence is then reversed to obtain the path.It should report  whether a solution was found; the solution path;the path length;the number of states expanded as well the number of moves to determine the cost.I am implementing a simple goal-based search agent in Python. The environment is a grid represented by an ASCII map. The agent starts at S and must reach G. The symbols # represent obstacles and . represents free cells. The agent can move up, down, left, or right, and every movement has cost 1. Implement A* search. Use Manhattan distance as the heuristic: h(n) = |x − xG| + |y − yG|. The program should: • represent grid positions as states; • maintain an appropriate frontier; • calculate g(n), h(n) and f(n); • avoid repeatedly expanding the same state; • reconstruct the path when the goal is reached; • report the path and its length; • report the number of states expanded. Keep the implementation simple and explain the main components of the code.
+
+import heapq
+
+# Warehouse map
+# # = obstacle, . = free cell, S = start, G = goal
+
+grid = [
+    "#################",
+    "#S....#.........#",
+    "#.###.#.#########",
+    "#...#.#.........#",
+    "###.#.#######...#",
+    "#...#.........#.#",
+    "#.###########...#",
+    "#.............G.#",
+    "#################"
+]
+
+
+def find_position(symbol):
+    """Find the row and column of S or G."""
+    for r, row in enumerate(grid):
+        for c, cell in enumerate(row):
+            if cell == symbol:
+                return (r, c)
+
+
+def heuristic(state, goal):
+    """Manhattan distance from state to goal."""
+    r, c = state
+    gr, gc = goal
+    return abs(r - gr) + abs(c - gc)
+
+
+def a_star(start, goal):
+    # Frontier entries: (f, g, state)
+    frontier = [(heuristic(start, goal), 0, start)]
+
+    # Best known cost from start to each state
+    g_cost = {start: 0}
+
+    # Parent information for path reconstruction
+    parent = {start: None}
+
+    # States whose neighbors have already been examined
+    expanded = set()
+    expanded_count = 0
+
+    # (row change, column change, action)
+    directions = [
+        (-1, 0, "Up"),
+        (1, 0, "Down"),
+        (0, -1, "Left"),
+        (0, 1, "Right")
+    ]
+
+    while frontier:
+        f, g, current = heapq.heappop(frontier)
+
+        # Ignore outdated entries in the priority queue
+        if g != g_cost.get(current):
+            continue
+
+        # Avoid expanding a state more than once
+        if current in expanded:
+            continue
+
+        # The goal is tested when removed from the frontier
+        if current == goal:
+            break
+
+        expanded.add(current)
+        expanded_count += 1
+
+        r, c = current
+
+        for dr, dc, action in directions:
+            nr, nc = r + dr, c + dc
+            neighbor = (nr, nc)
+
+            # Reject positions outside the grid
+            if not (0 <= nr < len(grid)
+                    and 0 <= nc < len(grid[0])):
+                continue
+
+            # Reject obstacles
+            if grid[nr][nc] == "#":
+                continue
+
+            # Every movement costs 1
+            new_g = g + 1
+
+            # Keep only a cheaper route to this state
+            if new_g < g_cost.get(neighbor, float("inf")):
+                g_cost[neighbor] = new_g
+                parent[neighbor] = (current, action)
+
+                h = heuristic(neighbor, goal)
+                f_new = new_g + h
+
+                heapq.heappush(
+                    frontier, (f_new, new_g, neighbor)
+                )
+
+    # No solution found
+    if goal not in g_cost:
+        return None, None, 0, 0
+
+    # Reconstruct path from goal back to start
+    path = []
+    actions = []
+    current = goal
+
+    while current != start:
+        path.append(current)
+        previous, action = parent[current]
+        actions.append(action)
+        current = previous
+
+    path.append(start)
+    path.reverse()
+    actions.reverse()
+
+    return path, actions, expanded_count, g_cost[goal]
+
+
+def main():
+    start = find_position("S")
+    goal = find_position("G")
+
+    print("WAREHOUSE")
+    for row in grid:
+        print(row)
+
+    print("\nSearch algorithm: A* Search")
+    print("Heuristic: Manhattan distance")
+    print("Start state:", start)
+    print("Goal state:", goal)
+
+    path, actions, expanded_count, cost = a_star(start, goal)
+
+    print("\nSEARCH RESULT")
+
+    if path is None:
+        print("Solution found: No")
+        print("No path exists from S to G.")
+    else:
+        print("Solution found: Yes")
+        print("Path (states):", path)
+        print("Movements:", " -> ".join(actions))
+        print("Path length (moves):", len(actions))
+        print("Total movement cost:", cost)
+        print("Number of states expanded:", expanded_count)
+
+
+if __name__ == "__main__":
+    main()
+    
