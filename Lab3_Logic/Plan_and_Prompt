@@ -1,0 +1,66 @@
+Task 1:Plan
+The valid moves are move,pickup and drop with certian preconditions.
+State        Facts
+State 0: ['At(Package,A)', 'At(Robot,A)']
+State 1: ['At(Robot,A)', 'Holding(Package)']
+State 2: ['At(Robot,B)', 'Holding(Package)']
+State 3: ['At(Robot,C)', 'Holding(Package)']
+State 4: ['At(Package,C)', 'At(Robot,C)']
+
+Possible actions
+1)Move(A,B) 
+precondition: At(Robot,A) 
+effects: ¬At(Robot, A), At(Robot, B).
+Similarly, the robot can move from B to A, B to C, and C to B
+
+2)PickUp(Package,A)
+Precondition:At(Robot, A) and At(P ackage, A).
+Effects:¬At(P ackage, A) and Holding(Package)
+
+3)Drop(Package,A)
+Precondition: At(Robot, C) and Holding(Package).
+Effects:Holding(Package) and At(Package, C).
+
+
+Prompt:
+I want to implement a simple planning agent in Python.
+Represent a state as a set of logical propositions.
+Each action should contain:
+• a name;
+• positive preconditions;
+• negative preconditions;
+• positive effects;
+• negative effects.
+An action is applicable if all of its preconditions are satisfied by the current state.
+When an action is applied:
+1. remove its negative effects from the state;
+2. add its positive effects to the state.
+Use breadth-first search to find a sequence of actions that achieves a specified goal.
+The program should also:
+• detect when no plan exists;
+• print the resulting sequence of actions;
+• print the states reached after each action.
+Explain the implementation and identify any assumptions you make.
+These are the possible moves:
+Possible actions
+1)Move(A,B) 
+precondition: At(Robot,A) 
+effects: ¬At(Robot, A), At(Robot, B).
+Similarly, the robot can move from B to A, B to C, and C to B
+
+2)PickUp(Package,A)
+Precondition:At(Robot, A) and At(P ackage, A).
+Effects:¬At(P ackage, A) and Holding(Package)
+
+3)Drop(Package,A)
+Precondition: At(Robot, C) and Holding(Package).
+Effects:Holding(Package) and At(Package, C).
+
+The program should find a plan that achieves At(Package, C) for the following map given,A is the start,C is end you can choose arbritarily accordingly and mention the assumption of B explicitly
+
+
+Task 4:Logic and Search
+
+Logical Reasoning makes sure all preconditions are satisified.To move around we need to update the current it uses action effectd.As well representing the states as propositons such as At(robot,A),At(package,A) etc.
+The search component Takes the next state from the queue then checks whether the goal has been reached.Tests which actions are applicable and then applies those actions to generate new states furthermore adds previously unexplored states to the queue. 
+ 

@@ -1,0 +1,442 @@
+
+from collections import deque
+
+
+# The maze from the given image
+grid = [
+    "#####################",
+    "#S...#.............G#",
+    "#.#...#...........#.#",
+    "#.#...#...........#.#",
+    "#...###.##.#.####...#",
+    "#...................#",
+    "#####################"
+]
+
+
+# Find the start (A) and goal (C) from the grid
+def find_cell(symbol):
+    for r, row in enumerate(grid):
+        for c, cell in enumerate(row):
+            if cell == symbol:
+                return (r, c)
+    return None
+
+
+A = find_cell("S")
+C = find_cell("G")
+
+
+# Each walkable cell is represented as a location.
+def at_robot(pos):
+    return f"At(Robot,{pos[0]},{pos[1]})"
+
+
+def at_package(pos):
+    return f"At(Package,{pos[0]},{pos[1]})"
+
+
+# Define an action
+class Action:
+    def __init__(self, name, positive_preconditions,
+                 negative_preconditions,
+                 positive_effects, negative_effects):
+        self.name = name
+        self.positive_preconditions = set(positive_preconditions)
+        self.negative_preconditions = set(negative_preconditions)
+        self.positive_effects = set(positive_effects)
+        self.negative_effects = set(negative_effects)
+
+    def is_applicable(self, state):
+        return (
+            self.positive_preconditions.issubset(state)
+            and self.negative_preconditions.isdisjoint(state)
+        )
+
+    def apply(self, state):
+        new_state = set(state)
+        new_state.difference_update(self.negative_effects)
+        new_state.update(self.positive_effects)
+        return frozenset(new_state)
+
+
+# Check whether a cell is inside the grid and not a wall
+def walkable(r, c):
+    return (
+        0 <= r < len(grid)
+        and 0 <= c < len(grid[r])
+        and grid[r][c] != "#"
+    )
+
+
+# Find all legal moves in the maze
+actions = []
+
+directions = [
+    (-1, 0, "Up"),
+    (1, 0, "Down"),
+    (0, -1, "Left"),
+    (0, 1, "Right")
+]
+
+for r, row in enumerate(grid):
+    for c, cell in enumerate(row):
+        if cell == "#":
+            continue
+
+        current = (r, c)
+
+        for dr, dc, direction in directions:
+            nr, nc = r + dr, c + dc
+
+            if walkable(nr, nc):
+                destination = (nr, nc)
+
+                actions.append(Action(
+                    f"Move {direction} {current} -> {destination}",
+                    {at_robot(current)},
+                    set(),
+                    {at_robot(destination)},
+                    {at_robot(current)}
+                ))
+
+
+# Pick up the package at A
+
+
+# Drop the package at C
+actions.append(Action(
+    "Drop(Package,C)",
+    {at_robot(C), "Holding(Package)"},
+    set(),
+    {at_package(C)},
+    {"Holding(Package)"}
+))
+
+
+# BFS planning algorithm
+def bfs(initial_state, goal, actions):
+    initial_state = frozenset(initial_state)
+    goal = set(goal)
+
+    queue = deque([(initial_state, [])])
+    visited = {initial_state}
+
+    while queue:
+        state, plan = queue.popleft()
+
+        if goal.issubset(state):
+            return plan
+
+        for action in actions:
+            if action.is_applicable(state):
+                next_state = action.apply(state)
+
+                if next_state not in visited:
+                    visited.add(next_state)
+                    new_plan = plan + [
+                        (action.name, next_state)
+                    ]
+                    queue.append((next_state, new_plan))
+
+    return None
+
+
+# Find a shortest path through the grid to choose B
+def shortest_grid_path(start, goal):
+    queue = deque([(start, [start])])
+    visited = {start}
+
+    while queue:
+        pos, path = queue.popleft()
+
+        if pos == goal:
+            return path
+
+        r, c = pos
+
+        for dr, dc, _ in directions:
+            nxt = (r + dr, c + dc)
+
+            if walkable(*nxt) and nxt not in visited:
+                visited.add(nxt)
+                queue.append((nxt, path + [nxt]))
+
+    return None
+
+
+grid_path = shortest_grid_path(A, C)
+
+if grid_path is None:
+    print("No path through the maze exists.")
+else:
+    # B is the midpoint of the shortest path.
+    B = grid_path[len(grid_path) // 2]
+
+    print("A (start):", A)
+    print("B (intermediate waypoint):", B)
+    print("C (goal):", C)
+
+    initial_state = {
+    at_robot(A),
+    at_package(A)
+}
+
+goal = {at_package(C)}
+
+plan = bfs(initial_state, goal, actions)
+
+if plan is None:
+    print("No plan found")
+else:
+    print("Plan found:")
+    for step, (name, state) in enumerate(plan, start=1):
+        print(f"Step {step}: {name}")
+        print("State reached:", sorted(state))
+
+        final_state = (
+            set(plan[-1][1]) if plan else initial_state
+        )
+
+        print("\nGoal achieved:", goal.issubset(final_state))
+
+Task3 
+Test C Code
+
+
+from collections import deque
+
+
+# The maze from the given image
+grid = [
+    "#####################",
+    "#S...#.............G#",
+    "#.#...#...........#.#",
+    "#.#...#...........#.#",
+    "#...###.##.#.####...#",
+    "#...................#",
+    "#####################"
+]
+
+
+# Find the start (A) and goal (C) from the grid
+def find_cell(symbol):
+    for r, row in enumerate(grid):
+        for c, cell in enumerate(row):
+            if cell == symbol:
+                return (r, c)
+    return None
+
+
+A = find_cell("S")
+C = find_cell("G")
+
+
+# Each walkable cell is represented as a location.
+def at_robot(pos):
+    return f"At(Robot,{pos[0]},{pos[1]})"
+
+
+def at_package(pos):
+    return f"At(Package,{pos[0]},{pos[1]})"
+
+
+# Define an action
+class Action:
+    def __init__(self, name, positive_preconditions,
+                 negative_preconditions,
+                 positive_effects, negative_effects):
+        self.name = name
+        self.positive_preconditions = set(positive_preconditions)
+        self.negative_preconditions = set(negative_preconditions)
+        self.positive_effects = set(positive_effects)
+        self.negative_effects = set(negative_effects)
+
+    def is_applicable(self, state):
+        return (
+            self.positive_preconditions.issubset(state)
+            and self.negative_preconditions.isdisjoint(state)
+        )
+
+    def apply(self, state):
+        new_state = set(state)
+        new_state.difference_update(self.negative_effects)
+        new_state.update(self.positive_effects)
+        return frozenset(new_state)
+
+
+# Check whether a cell is inside the grid and not a wall
+def walkable(r, c):
+    return (
+        0 <= r < len(grid)
+        and 0 <= c < len(grid[r])
+        and grid[r][c] != "#"
+    )
+
+
+# Find all legal moves in the maze.
+# IMPORTANT: Movement changes only the robot's location.
+actions = []
+
+directions = [
+    (-1, 0, "Up"),
+    (1, 0, "Down"),
+    (0, -1, "Left"),
+    (0, 1, "Right")
+]
+
+for r, row in enumerate(grid):
+    for c, cell in enumerate(row):
+        if cell == "#":
+            continue
+
+        current = (r, c)
+
+        for dr, dc, direction in directions:
+            nr, nc = r + dr, c + dc
+
+            if walkable(nr, nc):
+                destination = (nr, nc)
+
+                actions.append(Action(
+                    f"Move {direction} {current} -> {destination}",
+                    {at_robot(current)},
+                    set(),
+                    {at_robot(destination)},
+                    {at_robot(current)}
+                ))
+
+
+# NO PickUp action is added.
+# Therefore, the robot cannot acquire Holding(Package).
+
+
+# Drop the package at C.
+# This action requires the robot to be holding the package.
+actions.append(Action(
+    "Drop(Package,C)",
+    {at_robot(C), "Holding(Package)"},
+    set(),
+    {at_package(C)},
+    {"Holding(Package)"}
+))
+
+
+# BFS planning algorithm
+# Returns both the plan and the final state
+def bfs(initial_state, goal, actions):
+    initial_state = frozenset(initial_state)
+    goal = set(goal)
+
+    queue = deque([(initial_state, [])])
+    visited = {initial_state}
+
+    while queue:
+        state, plan = queue.popleft()
+
+        if goal.issubset(state):
+            return plan, state
+
+        for action in actions:
+            if action.is_applicable(state):
+                next_state = action.apply(state)
+
+                if next_state not in visited:
+                    visited.add(next_state)
+                    new_plan = plan + [
+                        (action.name, next_state)
+                    ]
+                    queue.append((next_state, new_plan))
+
+    return None, None
+
+
+# Find a shortest path through the grid to choose B
+def shortest_grid_path(start, goal):
+    queue = deque([(start, [start])])
+    visited = {start}
+
+    while queue:
+        pos, path = queue.popleft()
+
+        if pos == goal:
+            return path
+
+        r, c = pos
+
+        for dr, dc, _ in directions:
+            nxt = (r + dr, c + dc)
+
+            if walkable(*nxt) and nxt not in visited:
+                visited.add(nxt)
+                queue.append((nxt, path + [nxt]))
+
+    return None
+
+
+grid_path = shortest_grid_path(A, C)
+
+if grid_path is None:
+    print("No path through the maze exists.")
+
+else:
+    # B is the midpoint of a shortest path.
+    B = grid_path[len(grid_path) // 2]
+
+    print("A (start):", A)
+    print("B (intermediate waypoint):", B)
+    print("C (goal):", C)
+
+    initial_state = {
+        at_robot(A),
+        at_package(A)
+    }
+
+    # TEST 1: Check whether the robot can reach C.
+    print("\nTEST 1: Can the robot reach C?")
+
+    robot_plan, robot_state = bfs(
+        initial_state,
+        {at_robot(C)},
+        actions
+    )
+
+    if robot_plan is not None:
+        print("Robot reaches C: Yes")
+        for step, (name, state) in enumerate(robot_plan, start=1):
+            print(f"Step {step}: {name}")
+            print("State reached:", sorted(state))
+
+        print("Robot at C:", at_robot(C) in robot_state)
+        print("Package at C:", at_package(C) in robot_state)
+
+    else:
+        print("Robot cannot reach C.")
+
+    # TEST 2: Check whether the package can reach C.
+    print("\nTEST 2: Can the package reach C?")
+
+    package_plan, package_state = bfs(
+        initial_state,
+        {at_package(C)},
+        actions
+    )
+
+    if package_plan is None:
+        print("No plan found")
+        print("The robot can reach C, but the package remains at A.")
+    else:
+        print("Package delivery plan found:")
+
+        for step, (name, state) in enumerate(package_plan, start=1):
+            print(f"Step {step}: {name}")
+            print("State reached:", sorted(state))
+
+    # Automatically verify that the goals are distinct.
+    assert robot_plan is not None
+    assert at_robot(C) in robot_state
+    assert at_package(C) not in robot_state
+    assert package_plan is None
+
+    print("\nPASS: Robot reaching C is not equivalent to package reaching C.")
+
