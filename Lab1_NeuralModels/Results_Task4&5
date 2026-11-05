@@ -1,0 +1,177 @@
+Task4
+Part A
+
+Initial loss: 0.7562887072563171
+
+Final loss: 0.34657981991767883
+
+Four final probabilities:
+tensor([[6.5753e-06],
+        [9.9999e-01],
+        [5.0000e-01],
+        [5.0000e-01]])
+
+Thresholded predictions:
+tensor([[0],
+        [1],
+        [0],
+        [1]], dtype=torch.int32)
+
+Part B
+Loss: 0.7562887072563171
+
+First-layer weights W^(1):
+Parameter containing:
+tensor([[ 0.5406,  0.5869],
+        [-0.1657,  0.6496]], requires_grad=True)
+
+Gradient ∂L/∂W^(1):
+tensor([[ 0.0040, -0.0014],
+        [ 0.0068,  0.0275]])
+        
+Part C
+Step 1
+Hidden-layer weight matrix:
+Parameter containing:
+tensor([[0., 0.],
+        [0., 0.]], requires_grad=True)
+Rows remain identical? True
+
+Step 2
+Hidden-layer weight matrix:
+Parameter containing:
+tensor([[0., 0.],
+        [0., 0.]], requires_grad=True)
+Rows remain identical? True
+
+Step 11
+Hidden-layer weight matrix:
+Parameter containing:
+tensor([[0., 0.],
+        [0., 0.]], requires_grad=True)
+Rows remain identical? True
+
+Step 101
+Hidden-layer weight matrix:
+Parameter containing:
+tensor([[0., 0.],
+        [0., 0.]], requires_grad=True)
+Rows remain identical? True
+
+Step 1000
+Hidden-layer weight matrix:
+Parameter containing:
+tensor([[0., 0.],
+        [0., 0.]], requires_grad=True)
+Rows remain identical? True
+
+Part D
+
+==========================
+Activation: sigmoid
+==========================
+Final loss: 9.65199142228812e-05
+
+Final probabilities:
+tensor([[8.7274e-05],
+        [9.9991e-01],
+        [9.9987e-01],
+        [8.5071e-05]])
+
+Thresholded predictions:
+tensor([[0],
+        [1],
+        [1],
+        [0]], dtype=torch.int32)
+
+All four correct? True
+
+Early first-layer gradient norm:
+0.012496489100158215
+
+==========================
+Activation: tanh
+==========================
+Final loss: 0.34657981991767883
+
+Final probabilities:
+tensor([[6.5753e-06],
+        [9.9999e-01],
+        [5.0000e-01],
+        [5.0000e-01]])
+
+Thresholded predictions:
+tensor([[0],
+        [1],
+        [0],
+        [1]], dtype=torch.int32)
+
+All four correct? False
+
+Early first-layer gradient norm:
+0.022016659379005432
+
+==========================
+Activation: relu
+==========================
+Final loss: 0.3465748131275177
+
+Final probabilities:
+tensor([[5.0000e-01],
+        [1.0000e+00],
+        [5.0000e-01],
+        [2.8778e-06]])
+
+Thresholded predictions:
+tensor([[0],
+        [1],
+        [0],
+        [0]], dtype=torch.int32)
+
+All four correct? False
+
+Early first-layer gradient norm:
+0.05540303513407707
+
+
+FINAL RESULT TABLE
+-----------------------------------------------------------------
+Activation   Final Loss      All Correct     Early Grad Norm
+-----------------------------------------------------------------
+sigmoid      0.00009652      True            0.01249649
+tanh         0.34657982      False           0.02201666
+relu         0.34657481      False           0.05540304
+        
+        
+Task5
+Initial loss: 1.0907484292984009
+
+Final loss: 1.1712239938788116e-05
+
+Predicted class probabilities for all four inputs:
+Input [0.0, 0.0] -> Probabilities [0.9999850988388062, 1.4916216969140805e-05, 1.2122952641746565e-10] -> Predicted class 0
+Input [0.0, 1.0] -> Probabilities [6.66755340716918e-06, 0.9999905824661255, 2.744603989413008e-06] -> Predicted class 1
+Input [1.0, 0.0] -> Probabilities [6.445307462854544e-06, 0.9999911785125732, 2.3822294679121114e-06] -> Predicted class 1
+Input [1.0, 1.0] -> Probabilities [6.335573177196352e-10, 1.3694670087716077e-05, 0.9999862909317017] -> Predicted class 2
+
+Softmax probability vector for input (0, 1):
+tensor([6.6676e-06, 9.9999e-01, 2.7446e-06])
+
+Final loss: 1.1712239938788116e-05
+
+Class probabilities:
+tensor([[9.9999e-01, 1.4916e-05, 1.2123e-10],
+        [6.6676e-06, 9.9999e-01, 2.7446e-06],
+        [6.4453e-06, 9.9999e-01, 2.3822e-06],
+        [6.3356e-10, 1.3695e-05, 9.9999e-01]])
+
+Predicted classes:
+tensor([0, 1, 1, 2])
+
+True classes:
+tensor([0, 1, 1, 2])
+
+Gradient of hidden-layer weights:
+tensor([[-1.2664e-06, -1.3880e-06],
+        [-1.1848e-06, -6.3140e-07]])       
+        

@@ -1,0 +1,112 @@
+Design:
+A feed-forward neural network with 2 input units, 2 hidden units using a nonlinear activation such as sigmoid or tanh, and 1 sigmoid output unit. Binary cross-entropy is used as the loss function and the parameters are optimised using gradient-based optimisation.
+
+
+Prompt:
+Generate minimal PyTorch code for the following model
+Design:A feed-forward neural network with 2 input units, 2 hidden units using a nonlinear activation such as sigmoid or tanh, and 1 sigmoid output unit. Binary cross-entropy is used as the loss function and the parameters are optimised using gradient-based optimisation.
+Do not change the architecture or task. After training, report the final loss, all four probabilities, thresholded labels, and one parameter-gradient tensor. Set a random seed for reproducibility and explain each test in one sentence as well as include all of the following constraints:
+• the four XOR training examples explicitly;
+• a 2–2–1 network;
+• your chosen hidden activation;
+• a sigmoid binary output (or, preferably in PyTorch, logits with BCEWithLogitsLoss);
+• random weight initialisation;
+• full-batch training for a few thousand lightweight CPU steps;
+• printing the final loss and the four predictions;
+• printing or otherwise exposing at least one gradient tensor after backward().
+
+Code:
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# --------------------------------------------------
+# 1. Reproducibility
+# --------------------------------------------------
+torch.manual_seed(42)
+
+# --------------------------------------------------
+# 2. XOR training data (all four examples explicitly)
+# --------------------------------------------------
+X = torch.tensor([
+    [0.0, 0.0],
+    [0.0, 1.0],
+    [1.0, 0.0],
+    [1.0, 1.0]
+])
+
+y = torch.tensor([
+    [0.0],
+    [1.0],
+    [1.0],
+    [0.0]
+])
+
+# --------------------------------------------------
+# 3. 2–2–1 neural network
+# --------------------------------------------------
+class XORNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        # Random weights are automatically initialized by PyTorch
+        self.hidden = nn.Linear(2, 2)   # 2 inputs → 2 hidden units
+        self.output = nn.Linear(2, 1)   # 2 hidden units → 1 output
+
+    def forward(self, x):
+        # Nonlinear hidden activation: tanh
+        x = torch.tanh(self.hidden(x))
+
+        # Return logits (no sigmoid here)
+        return self.output(x)
+
+
+model = XORNet()
+
+# --------------------------------------------------
+# 4. Loss and gradient-based optimizer
+# --------------------------------------------------
+# BCEWithLogitsLoss combines sigmoid + binary cross-entropy
+criterion = nn.BCEWithLogitsLoss()
+
+optimizer = optim.Adam(model.parameters(), lr=0.05)
+
+# --------------------------------------------------
+# 5. Full-batch training
+# --------------------------------------------------
+epochs = 5000
+
+for epoch in range(epochs):
+    optimizer.zero_grad()
+
+    logits = model(X)
+    loss = criterion(logits, y)
+
+    loss.backward()       # Compute gradients
+    optimizer.step()      # Update parameters
+
+
+# --------------------------------------------------
+# 6. Final evaluation
+# --------------------------------------------------
+with torch.no_grad():
+    logits = model(X)
+    probabilities = torch.sigmoid(logits)
+    predictions = (probabilities >= 0.5).float()
+
+print("Final loss:")
+print(loss.item())
+
+print("\nProbabilities:")
+print(probabilities)
+
+print("\nThresholded labels:")
+print(predictions)
+
+# --------------------------------------------------
+# 7. Expose a gradient tensor
+# --------------------------------------------------
+# Note: gradients remain available from the final backward() call
+print("\nGradient of hidden-layer weights:")
+print(model.hidden.weight.grad)
+
