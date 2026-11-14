@@ -1,0 +1,106 @@
+First Order Model
+
+Results 
+
+Cell1: 
+P(cat | the) = 0.2500
+P(dog | the) = 0.2500
+P(mat | the) = 0.1667
+P(rug | the) = 0.1667
+P(park | the) = 0.1667
+Most probable after 'the': cat
+the park
+the rug
+the rug
+the dog sat on the rug
+the dog sat on the mat
+
+Cell2:
+Normalisation test:
+<START>  total = 1.000000  OK
+cat      total = 1.000000  OK
+dog      total = 1.000000  OK
+mat      total = 1.000000  OK
+on       total = 1.000000  OK
+park     total = 1.000000  OK
+ran      total = 1.000000  OK
+rug      total = 1.000000  OK
+sat      total = 1.000000  OK
+the      total = 1.000000  OK
+to       total = 1.000000  OK
+
+All rows sum to 1: True
+
+Cell3:
+P(X_t+1 | X_t = the)
+  P(cat   | the) = 0.2500   #####
+  P(dog   | the) = 0.2500   #####
+  P(mat   | the) = 0.1667   ###
+  P(rug   | the) = 0.1667   ###
+  P(park  | the) = 0.1667   ###
+  argmax_w P(w | the) = cat / dog  (tie)
+
+P(X_t+1 | X_t = cat)
+  P(sat   | cat) = 0.6667   #############
+  P(ran   | cat) = 0.3333   #######
+  argmax_w P(w | cat) = sat
+
+P(X_t+1 | X_t = dog)
+  P(sat   | dog) = 0.6667   #############
+  P(ran   | dog) = 0.3333   #######
+  argmax_w P(w | dog) = sat
+
+P(X_t+1 | X_t = sat)
+  P(on    | sat) = 1.0000   ####################
+  argmax_w P(w | sat) = on
+
+P(X_t+1 | X_t = ran)
+  P(to    | ran) = 1.0000   ####################
+  argmax_w P(w | ran) = to
+
+P(X_t+1 | X_t = on)
+  P(the   | on) = 1.0000   ####################
+  argmax_w P(w | on) = the
+
+P(X_t+1 | X_t = to)
+  P(the   | to) = 1.0000   ####################
+  argmax_w P(w | to) = the
+ 
+ Cell4:
+ 1. the cat sat on the dog ran to the cat sat on the cat sat on the dog ran to the dog sat on the mat
+ 2. the park
+ 3. the dog sat on the rug
+ 4. the park
+ 5. the cat sat on the cat sat on the mat
+ 6. the mat
+ 7. the dog sat on the mat
+ 8. the rug
+ 9. the dog sat on the mat
+10. the park
+11. the mat
+12. the mat
+13. the mat
+14. the mat
+15. the rug
+16. the cat sat on the cat sat on the park
+17. the dog ran to the dog sat on the park
+18. the rug
+19. the park
+20. the dog sat on the dog sat on the cat ran to the mat
+
+Cell5:
+Mode A: Greedy
+1. the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat
+2. the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat
+3. the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat
+4. the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat
+5. the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat sat on the cat
+
+Mode B: Sampling
+1. the cat sat on the dog ran to the cat sat on the cat sat on the dog ran to the dog sat on the mat
+2. the park
+3. the dog sat on the rug
+4. the park
+5. the cat sat on the cat sat on the mat 
+
+

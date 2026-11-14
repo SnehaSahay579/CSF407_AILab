@@ -1,0 +1,127 @@
+Second Order Model
+This model's implementation was done by modifying the entire code of First order model all together
+
+import random
+import math
+
+START, END = "<START>", "<END>"
+
+
+class SecondOrderLM:
+    def __init__(self, sentences):
+        # CHANGE 1: counts are of triples, keyed by the two-word context (a, b)
+        #           counts[(a, b)][c] = number of times c followed the pair (a, b)
+        self.counts = {}
+        for sentence in sentences:
+            # CHANGE 2: two <START> tokens, so the first word also has a two-word context
+            tokens = [START, START] + sentence + [END]
+            # CHANGE 3: read consecutive triples instead of consecutive pairs
+            for a, b, c in zip(tokens, tokens[1:], tokens[2:]):
+                self.counts.setdefault((a, b), {})
+                self.counts[(a, b)][c] = self.counts[(a, b)].get(c, 0) + 1
+
+        # Conditional distributions: P(c | a, b) = C(a, b, c) / sum_k C(a, b, k)
+        self.probs = {}
+        for ctx, row in self.counts.items():
+            total = sum(row.values())
+            self.probs[ctx] = {w: n / total for w, n in row.items()}
+
+    def show_counts(self, a, b):
+        if (a, b) not in self.counts:
+            print(f"No observed triples starting with ({a}, {b})")
+            return
+        for word, n in sorted(self.counts[(a, b)].items(), key=lambda x: -x[1]):
+            print(f"C({a}, {b}, {word}) = {n}")
+
+    def show(self, a, b):
+        if (a, b) not in self.probs:
+            print(f"No observed transitions after ({a}, {b})")
+            return
+        for word, p in sorted(self.probs[(a, b)].items(), key=lambda x: -x[1]):
+            print(f"P({word} | {a}, {b}) = {p:.4f}")
+
+    def predict(self, a, b):
+        if (a, b) not in self.probs:
+            return None
+        dist = self.probs[(a, b)]
+        return max(sorted(dist), key=dist.get)
+
+    def next_token(self, a, b, mode="sample"):
+        dist = self.probs[(a, b)]
+        if mode == "greedy":
+            return max(sorted(dist), key=dist.get)
+        words = list(dist.keys())
+        weights = list(dist.values())
+        return random.choices(words, weights=weights, k=1)[0]
+
+    def generate(self, mode="sample", max_len=30):
+        if mode not in ("greedy", "sample"):
+            raise ValueError("mode must be 'greedy' or 'sample'")
+        a, b, sentence = START, START, []
+        while len(sentence) < max_len:
+            if (a, b) not in self.probs:     # unseen two-word context: stop safely
+                break
+            nxt = self.next_token(a, b, mode)
+            if nxt == END:
+                break
+            sentence.append(nxt)
+            a, b = b, nxt                    # CHANGE 4: slide the two-word window
+        return " ".join(sentence)
+
+
+# ---- Example use (training_data as before) ----
+lm2 = SecondOrderLM(training_data)
+
+print("Triple counts for context (on, the):")
+lm2.show_counts("on", "the")
+print("\nDistribution P(X_t | on, the):")
+lm2.show("on", "the")
+
+print("\nDistribution P(X_t | to, the):")
+lm2.show("to", "the")
+
+
+def check_normalisation(probabilities, tol=1e-9):
+    """Check that for every context, sum_v P(v | context) = 1."""
+    all_ok = True
+    for ctx in sorted(probabilities):
+        label = " ".join(ctx) if isinstance(ctx, tuple) else ctx   # (a, b) -> "a b"
+        total = sum(probabilities[ctx].values())
+        ok = math.isclose(total, 1.0, abs_tol=tol)
+        print(f"{label:<18} total = {total:.6f}  {'OK' if ok else 'FAIL'}")
+        if not ok:
+            all_ok = False
+    return all_ok
+
+
+lm2 = SecondOrderLM(training_data)
+
+print("Second-order normalisation test:")
+passed = check_normalisation(lm2.probs)
+print("\nAll rows sum to 1:", passed)
+print("Number of contexts checked:", len(lm2.probs))
+
+random.seed(42)
+for name, lm in [("Second-order", lm2)]:
+    print(f"{name}: 20 sampled sentences")
+    sentences = [lm.generate("sample") for _ in range(20)]
+    for i, s in enumerate(sentences, 1):
+        print(f"{i:2d}. {s}")
+    print()
+    filename = "generated_" + name.lower().replace("-", "_") + ".txt"
+    with open(filename, "w") as f:
+        f.write("\n".join(sentences) + "\n")
+
+# ---------- 5 greedy and 5 sampled sentences ----------
+for name, lm in [("Second-order", lm2)]:
+    print(f"{name}: Mode A, greedy (5 sentences)")
+    for i in range(5):
+        print(f"{i+1}. {lm.generate('greedy')}")
+
+    print(f"\n{name}: Mode B, sampling (5 sentences)")
+    for i in range(5):
+        print(f"{i+1}. {lm.generate('sample')}")
+    print()
+        
+
+
